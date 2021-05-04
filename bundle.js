@@ -458,7 +458,6 @@ var RadioButtons = function RadioButtons(_ref) {
   var buttons = _ref.buttons,
       onChange = _ref.onChange;
 
-  // console.log(props);
   var _useState = (0, _react.useState)(false),
       _useState2 = _slicedToArray(_useState, 2),
       screenSharebuttonChecked = _useState2[0],
@@ -471,13 +470,9 @@ var RadioButtons = function RadioButtons(_ref) {
 
   var toggleButtons = function toggleButtons() {
     onChange();
-    console.log("veremos");
-    //console.log(event.currentTarget);
     setscreenSharebuttonChecked(!screenSharebuttonChecked);
     setvideobuttonChecked(!videobuttonChecked);
   };
-
-  //   useEffect(() => {}, []);
 
   var renderButtons = function renderButtons() {
     return buttons.map(function (button, index) {
@@ -491,9 +486,8 @@ var RadioButtons = function RadioButtons(_ref) {
           button.label
         ),
         _react2.default.createElement("input", {
-          type: "radio"
-          //checked={state.value === button.value}
-          , checked: button.value === "camera" ? videobuttonChecked : screenSharebuttonChecked,
+          type: "radio",
+          checked: button.value === "camera" ? videobuttonChecked : screenSharebuttonChecked,
           id: key,
           name: (0, _lodash.uniqueId)("RadioButtons"),
           value: button.value,
@@ -511,54 +505,6 @@ var RadioButtons = function RadioButtons(_ref) {
 };
 
 exports.default = RadioButtons;
-
-// export default class RadioButtons extends Component {
-//   constructor(props) {
-//     super(props);
-
-//     this.state = {
-//       id: uniqueId("RadioButtons"),
-//       value: this.props.initialChecked
-//     };
-//   }
-
-//   onChange = event => {
-//     let value = event.currentTarget.value;
-//     this.setState({ value });
-//   };
-
-//   componentDidUpdate(prevProps, prevState) {
-//     if (
-//       prevState.value !== this.state.value &&
-//       typeof this.props.onChange === "function"
-//     ) {
-//       this.props.onChange(this.state.value);
-//     }
-//   }
-
-//   renderButtons() {
-//     return buttons.map((button, index) => {
-//       let key = state.id + "_" + index + "_" + button.value;
-//       return (
-//         <div key={key}>
-//           <label htmlFor={key}>{button.label}</label>
-//           <input
-//             type="radio"
-//             checked={state.value === button.value}
-//             id={key}
-//             name={state.id}
-//             value={button.value}
-//             onChange={onChange}
-//           />
-//         </div>
-//       );
-//     });
-//   }
-
-//   render() {
-//     return <div>{this.renderButtons()}</div>;
-//   }
-// }
 
 },{"lodash":26,"react":48}],8:[function(require,module,exports){
 'use strict';
