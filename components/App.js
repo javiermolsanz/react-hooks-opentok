@@ -46,7 +46,6 @@ const App = ({ eventHandlers, onConnect, onError }) => {
 
   eventHandlers = {
     sessionConnected: () => {
-      console.log("yeyy connected");
       setisConnected("connected");
     },
     sessionReconnecting: () => {

@@ -123,7 +123,6 @@ var App = function App(_ref) {
 
   eventHandlers = {
     sessionConnected: function sessionConnected() {
-      console.log("yeyy connected");
       setisConnected("connected");
     },
     sessionReconnecting: function sessionReconnecting() {
@@ -272,15 +271,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var ConnectionStatus = function ConnectionStatus(_ref) {
   var isconnected = _ref.isconnected;
-
-  //console.log(isconnected);
-  // if (connected === true) {
-  //   status = "Connected";
-  // } else {
-  //   status = "Disconnected";
-  // }
-  //let status = isconnected ? "Connected" : "Disconnected";
-  // let status = true ? "Connected" : "Disconnected";
 
   return _react2.default.createElement(
     "div",
@@ -559,97 +549,140 @@ var RadioButtons = function RadioButtons(_ref) {
 exports.default = RadioButtons;
 
 },{"lodash":26,"react":48}],8:[function(require,module,exports){
-'use strict';
+"use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
-var _react = require('react');
+var _react = require("react");
 
 var _react2 = _interopRequireDefault(_react);
 
-var _src = require('../../src');
+var _src = require("../../src");
 
-var _CheckBox = require('./CheckBox');
+var _CheckBox = require("./CheckBox");
 
 var _CheckBox2 = _interopRequireDefault(_CheckBox);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+// export default class Subscriber extends Component {
+//   constructor(props) {
+//     super(props);
 
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+//     this.state = {
+//       error: null,
+//       audio: true,
+//       video: true
+//     };
+//   }
 
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+//   setAudio = audio => {
+//     //
+//   };
 
-var Subscriber = function (_Component) {
-  _inherits(Subscriber, _Component);
+//   setVideo = video => {
+//     //this.setState({ video });
+//   };
 
-  function Subscriber(props) {
-    _classCallCheck(this, Subscriber);
+//   onError = err => {
+//     //this.setState({ error: `Failed to subscribe: ${err.message}` });
+//   };
 
-    var _this = _possibleConstructorReturn(this, (Subscriber.__proto__ || Object.getPrototypeOf(Subscriber)).call(this, props));
+//   render() {
+//     return (
+//       <div>
+//         {this.state.error ? <div>{this.state.error}</div> : null}
+//         <OTSubscriber
+//           properties={{
+//             subscribeToAudio: this.state.audio,
+//             subscribeToVideo: this.state.video
+//           }}
+//           onError={this.onError}
+//           retry={true}
+//           maxRetryAttempts={3}
+//           retryAttemptTimeout={2000}
+//         />
+//         <CheckBox
+//           label="Subscribe to Audio"
+//           initialChecked={this.state.audio}
+//           onChange={this.setAudio}
+//         />
+//         <CheckBox
+//           label="Subscribe to Video"
+//           initialChecked={this.state.video}
+//           onChange={this.setVideo}
+//         />
+//       </div>
+//     );
+//   }
+// }
 
-    _this.setAudio = function (audio) {
-      _this.setState({ audio: audio });
-    };
+var Subscriber = function Subscriber(_ref) {
+  var onError = _ref.onError;
 
-    _this.setVideo = function (video) {
-      _this.setState({ video: video });
-    };
+  var _useState = (0, _react.useState)(true),
+      _useState2 = _slicedToArray(_useState, 2),
+      isSubscribingVideo = _useState2[0],
+      setisSubscribingVideo = _useState2[1];
 
-    _this.onError = function (err) {
-      _this.setState({ error: 'Failed to subscribe: ' + err.message });
-    };
+  var _useState3 = (0, _react.useState)(true),
+      _useState4 = _slicedToArray(_useState3, 2),
+      isSubscribingAudio = _useState4[0],
+      setisSubscribingAudio = _useState4[1];
 
-    _this.state = {
-      error: null,
-      audio: true,
-      video: true
-    };
-    return _this;
-  }
+  var _useState5 = (0, _react.useState)(null),
+      _useState6 = _slicedToArray(_useState5, 2),
+      error = _useState6[0],
+      setError = _useState6[1];
 
-  _createClass(Subscriber, [{
-    key: 'render',
-    value: function render() {
-      return _react2.default.createElement(
-        'div',
-        null,
-        this.state.error ? _react2.default.createElement(
-          'div',
-          null,
-          this.state.error
-        ) : null,
-        _react2.default.createElement(_src.OTSubscriber, {
-          properties: {
-            subscribeToAudio: this.state.audio,
-            subscribeToVideo: this.state.video
-          },
-          onError: this.onError,
-          retry: true,
-          maxRetryAttempts: 3,
-          retryAttemptTimeout: 2000
-        }),
-        _react2.default.createElement(_CheckBox2.default, {
-          label: 'Subscribe to Audio',
-          initialChecked: this.state.audio,
-          onChange: this.setAudio
-        }),
-        _react2.default.createElement(_CheckBox2.default, {
-          label: 'Subscribe to Video',
-          initialChecked: this.state.video,
-          onChange: this.setVideo
-        })
-      );
-    }
-  }]);
+  var setAudio = function setAudio() {
+    setisSubscribingAudio(!isSubscribingAudio);
+  };
 
-  return Subscriber;
-}(_react.Component);
+  var setVideo = function setVideo() {
+    //this.setState({ video });
+    setisSubscribingVideo(!isSubscribingVideo);
+  };
+
+  onError = function onError(err) {
+    setError(err);
+    //this.setState({ error: `Failed to subscribe: ${err.message}` });
+  };
+
+  return _react2.default.createElement(
+    "div",
+    null,
+    error ? _react2.default.createElement(
+      "div",
+      null,
+      error
+    ) : null,
+    _react2.default.createElement(_src.OTSubscriber, {
+      properties: {
+        subscribeToAudio: isSubscribingAudio,
+        subscribeToVideo: isSubscribingVideo
+      },
+      onError: onError,
+      retry: true,
+      maxRetryAttempts: 3,
+      retryAttemptTimeout: 2000
+    }),
+    _react2.default.createElement(_CheckBox2.default, {
+      label: "Subscribe to Audio",
+      initialChecked: isSubscribingAudio,
+      onChange: setAudio
+    }),
+    _react2.default.createElement(_CheckBox2.default, {
+      label: "Subscribe to Video",
+      initialChecked: isSubscribingVideo,
+      onChange: setVideo
+    })
+  );
+};
 
 exports.default = Subscriber;
 
