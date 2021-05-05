@@ -1,17 +1,17 @@
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
-'use strict';
+"use strict";
 
-var _react = require('react');
+var _react = require("react");
 
 var _react2 = _interopRequireDefault(_react);
 
-var _reactDom = require('react-dom');
+var _reactDom = require("react-dom");
 
-var _config = require('./config');
+var _config = require("./config");
 
 var _config2 = _interopRequireDefault(_config);
 
-var _App = require('./components/App');
+var _App = require("./components/App");
 
 var _App2 = _interopRequireDefault(_App);
 
@@ -22,12 +22,12 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
   sessionId: _config2.default.SESSION_ID,
   token: _config2.default.TOKEN,
   loadingDelegate: _react2.default.createElement(
-    'div',
+    "div",
     null,
-    'Loading...'
+    "Loading..."
   ),
-  opentokClientUrl: 'https://static.opentok.com/v2/js/opentok.min.js'
-}), document.getElementById('content'));
+  opentokClientUrl: "https://static.opentok.com/v2/js/opentok.min.js"
+}), document.getElementById("content"));
 
 },{"./components/App":2,"./config":9,"react":48,"react-dom":42}],2:[function(require,module,exports){
 "use strict";
@@ -67,11 +67,11 @@ var _config2 = _interopRequireDefault(_config);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+//am I destructuring below what's coming from preloadScriptm and OTSession
+
+//COULD i just reference the library on the index.html file and then in the App component useEffect to retrieve apikey, sessionId and token?
 var App = function App(_ref) {
-  var apiKey = _ref.apiKey,
-      sessionId = _ref.sessionId,
-      token = _ref.token,
-      eventHandlers = _ref.eventHandlers,
+  var eventHandlers = _ref.eventHandlers,
       onConnect = _ref.onConnect,
       onError = _ref.onError;
 
@@ -84,6 +84,42 @@ var App = function App(_ref) {
       _useState4 = _slicedToArray(_useState3, 2),
       networkWarning = _useState4[0],
       setNetworkwarning = _useState4[1];
+
+  var _useState5 = (0, _react.useState)(null),
+      _useState6 = _slicedToArray(_useState5, 2),
+      creds = _useState6[0],
+      setCreds = _useState6[1];
+
+  var _useState7 = (0, _react.useState)(true),
+      _useState8 = _slicedToArray(_useState7, 2),
+      isLoading = _useState8[0],
+      setisLoading = _useState8[1];
+
+  var _useState9 = (0, _react.useState)(null),
+      _useState10 = _slicedToArray(_useState9, 2),
+      error = _useState10[0],
+      setError = _useState10[1];
+
+  (0, _react.useEffect)(function () {
+    if (_config2.default.SERVER_URL != "") {
+      fetch(_config2.default.SERVER_URL + "/session").then(function (res) {
+        return res.json();
+      }).then(function (json) {
+        setisLoading(false);
+        setCreds(json);
+      }).catch(function catchErr(error) {
+        handleError(error);
+        alert("Failed to get opentok sessionId and token. Make sure you have updated the config.js file.");
+      });
+      return;
+    }
+    setisLoading(false);
+    setCreds({
+      apiKey: _config2.default.API_KEY,
+      sessionId: _config2.default.SESSION_ID,
+      token: _config2.default.TOKEN
+    });
+  }, []);
 
   eventHandlers = {
     sessionConnected: function sessionConnected() {
@@ -103,40 +139,34 @@ var App = function App(_ref) {
     }
   };
 
-  // publisherEventHandlers = {
-  //   accessDenied: () => {
-  //     console.log("User denied access to media source");
-  //   },
-  //   streamCreated: () => {
-  //     console.log("Publisher stream created");
-  //   },
-  //   streamDestroyed: ({ reason }) => {
-  //     console.log(`Publisher stream destroyed because: ${reason}`);
-  //   }
-  // };
-
   onError = function onError(err) {
     console.log(err);
+    setError(true);
     setisConnected(false);
   };
-
-  return _react2.default.createElement(
+  if (error) return _react2.default.createElement(
+    "div",
+    null,
+    "error"
+  );
+  if (isLoading) return _react2.default.createElement(
+    "div",
+    null,
+    " Loading creds"
+  );
+  return creds && _react2.default.createElement(
     _src.OTSession,
     {
-      apiKey: apiKey,
-      sessionId: sessionId,
-      token: token,
+      apiKey: creds.apiKey,
+      sessionId: creds.sessionId,
+      token: creds.token,
       eventHandlers: eventHandlers,
       onConnect: onConnect,
       onError: onError
     },
     _react2.default.createElement(_ConnectionStatus2.default, { isconnected: isconnected }),
     _react2.default.createElement(_NetworkWarning2.default, { networkWarning: networkWarning }),
-    _react2.default.createElement(_Publisher2.default
-    //publisherEventHandlers={publisherEventHandlers}
-    // onError={onError}
-    // onInit={onInit}
-    , null),
+    _react2.default.createElement(_Publisher2.default, null),
     _react2.default.createElement(
       _src.OTStreams,
       null,
@@ -314,15 +344,13 @@ var _CheckBox2 = _interopRequireDefault(_CheckBox);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var Publisher = function Publisher(_ref) {
-  var properties = _ref.properties,
-      eventHandlers = _ref.eventHandlers,
+  var eventHandlers = _ref.eventHandlers,
       onError = _ref.onError,
       onInit = _ref.onInit;
 
   var state = {
     error: null,
-    videoSource: "camera",
-    publisher: null
+    videoSource: "camera"
   };
 
   var _useState = (0, _react.useState)(true),
@@ -339,20 +367,25 @@ var Publisher = function Publisher(_ref) {
       _useState6 = _slicedToArray(_useState5, 2),
       videosource = _useState6[0],
       setSource = _useState6[1];
+  //const publisher = useRef(null);
 
-  // useEffect(() => {
-  //   publisher = getPublisher();
-  // }, []);
 
-  // const setVideo = () => {
-  //   // state.video = !state.video;
-  //   isPublishingVideo(!state.video);
-  //   state.video = !state.video;
-  //   console.log(state.video + " video");
-  //   //console.log(state);
-  //   //publisher.publishVideo(!state.video);
-  //   //pub.publishVideo(!state.video);
-  // };
+  var otPublisher = _react2.default.useRef();
+
+  var _useState7 = (0, _react.useState)(null),
+      _useState8 = _slicedToArray(_useState7, 2),
+      pub = _useState8[0],
+      setPublisher = _useState8[1];
+
+  (0, _react.useEffect)(function () {
+    getPublisher();
+  }, []);
+
+  var getPublisher = function getPublisher() {
+    if (otPublisher) {
+      setPublisher(otPublisher.current.getPublisher());
+    }
+  };
 
   var toggleVideo = function toggleVideo() {
     console.log("toggling video");
@@ -378,9 +411,15 @@ var Publisher = function Publisher(_ref) {
   eventHandlers = {
     streamCreated: function streamCreated(event) {
       console.log("Publisher stream created!");
+      console.log(otPublisher);
+      console.log(otPublisher.current.state.publisher.getAudioSource());
+      //console.log(getPublisher().getAudioSource());
     },
     streamDestroyed: function streamDestroyed(event) {
       console.log("Publisher stream destroyed!");
+    },
+    mediaStopped: function mediaStopped() {
+      //setisPublishingScreen(null);
     }
   };
 
@@ -388,6 +427,7 @@ var Publisher = function Publisher(_ref) {
     console.log(" error: `Failed to publish: ${err.message}");
   };
   onInit = function onInit() {
+    //setPublisher(getPublisher());
     console.log("pub init");
   };
 
@@ -400,6 +440,7 @@ var Publisher = function Publisher(_ref) {
       state.error
     ) : null,
     _react2.default.createElement(_src.OTPublisher, {
+      ref: otPublisher,
       properties: {
         publishAudio: isPublishingAudio,
         //publishAudio: isAudioMuted,
@@ -611,7 +652,8 @@ exports.default = {
   API_KEY: "46264952",
   SESSION_ID: "1_MX40NjI2NDk1Mn5-MTYxOTk4MjgwMzk4NH42QXZmVkZFTFIrZXlEVWJKNFBYcjAwOTB-fg",
   TOKEN: "T1==cGFydG5lcl9pZD00NjI2NDk1MiZzaWc9MTE5MGJiYmRmMmU0ZDdmZWI1NmQ1MWRjYjJkYmEwZjNlZTZmMTI1ODpzZXNzaW9uX2lkPTFfTVg0ME5qSTJORGsxTW41LU1UWXhPVGs0TWpnd016azROSDQyUVhabVZrWkZURklyWlhsRVZXSktORkJZY2pBd09UQi1mZyZjcmVhdGVfdGltZT0xNjIwMDY5Mjg3Jm5vbmNlPTAuMDY3OTA2NDc0Njk4MTg0MTImcm9sZT1wdWJsaXNoZXImZXhwaXJlX3RpbWU9MTYyMDY3NDA4NiZpbml0aWFsX2xheW91dF9jbGFzc19saXN0PQ==",
-  CHROME_EXTENSION_ID: "baz"
+  CHROME_EXTENSION_ID: "baz",
+  SERVER_URL: "https://tokboxpruebita.herokuapp.com"
 };
 
 },{}],10:[function(require,module,exports){

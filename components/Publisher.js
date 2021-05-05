@@ -1,33 +1,31 @@
-import React, { Component, useState, useEffect } from "react";
+import React, { Component, useState, useEffect, useRef } from "react";
 
 import { OTPublisher } from "../../src";
 import RadioButtons from "./RadioButtons";
 import CheckBox from "./CheckBox";
 
-const Publisher = ({ properties, eventHandlers, onError, onInit }) => {
+const Publisher = ({ eventHandlers, onError, onInit }) => {
   let state = {
     error: null,
-    videoSource: "camera",
-    publisher: null
+    videoSource: "camera"
   };
 
   const [isPublishingVideo, setisPublishingVideo] = useState(true);
   const [isPublishingAudio, setisPublishingAudio] = useState(true);
   let [videosource, setSource] = useState(undefined);
+  //const publisher = useRef(null);
+  const otPublisher = React.useRef();
+  const [pub, setPublisher] = useState(null);
 
-  // useEffect(() => {
-  //   publisher = getPublisher();
-  // }, []);
+  useEffect(() => {
+    getPublisher();
+  }, []);
 
-  // const setVideo = () => {
-  //   // state.video = !state.video;
-  //   isPublishingVideo(!state.video);
-  //   state.video = !state.video;
-  //   console.log(state.video + " video");
-  //   //console.log(state);
-  //   //publisher.publishVideo(!state.video);
-  //   //pub.publishVideo(!state.video);
-  // };
+  const getPublisher = () => {
+    if (otPublisher) {
+      setPublisher(otPublisher.current.getPublisher());
+    }
+  };
 
   const toggleVideo = () => {
     console.log("toggling video");
@@ -54,9 +52,15 @@ const Publisher = ({ properties, eventHandlers, onError, onInit }) => {
   eventHandlers = {
     streamCreated: event => {
       console.log("Publisher stream created!");
+      console.log(otPublisher);
+      console.log(otPublisher.current.state.publisher.getAudioSource());
+      //console.log(getPublisher().getAudioSource());
     },
     streamDestroyed: event => {
       console.log("Publisher stream destroyed!");
+    },
+    mediaStopped: () => {
+      //setisPublishingScreen(null);
     }
   };
 
@@ -64,6 +68,7 @@ const Publisher = ({ properties, eventHandlers, onError, onInit }) => {
     console.log(" error: `Failed to publish: ${err.message}");
   };
   onInit = () => {
+    //setPublisher(getPublisher());
     console.log("pub init");
   };
 
@@ -71,6 +76,7 @@ const Publisher = ({ properties, eventHandlers, onError, onInit }) => {
     <div>
       {state.error ? <div>{state.error}</div> : null}
       <OTPublisher
+        ref={otPublisher}
         properties={{
           publishAudio: isPublishingAudio,
           //publishAudio: isAudioMuted,
