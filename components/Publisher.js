@@ -5,14 +5,10 @@ import RadioButtons from "./RadioButtons";
 import CheckBox from "./CheckBox";
 
 const Publisher = ({ eventHandlers, onError, onInit }) => {
-  let state = {
-    error: null,
-    videoSource: "camera"
-  };
-
   const [isPublishingVideo, setisPublishingVideo] = useState(true);
   const [isPublishingAudio, setisPublishingAudio] = useState(true);
   let [videosource, setSource] = useState(undefined);
+  const [error, setError] = useState(null);
   //const publisher = useRef(null);
   const otPublisher = React.useRef();
   const [pub, setPublisher] = useState(null);
@@ -37,16 +33,10 @@ const Publisher = ({ eventHandlers, onError, onInit }) => {
     setisPublishingAudio(!isPublishingAudio);
   };
 
-  // setVideo = video => {
-  //   state.video = video;
-  // };
-
   const setVideoSource = () => {
     console.log("changing video from " + videosource);
     if (videosource === undefined) setSource("screen");
     else setSource(undefined);
-    //videosource = "camera" ? setSource("screen") : null;
-    //state.videoSource = videoSource;
   };
 
   eventHandlers = {
@@ -65,6 +55,7 @@ const Publisher = ({ eventHandlers, onError, onInit }) => {
   };
 
   onError = err => {
+    setError(err);
     console.log(" error: `Failed to publish: ${err.message}");
   };
   onInit = () => {
@@ -74,7 +65,7 @@ const Publisher = ({ eventHandlers, onError, onInit }) => {
 
   return (
     <div>
-      {state.error ? <div>{state.error}</div> : null}
+      {error ? <div>{error}</div> : null}
       <OTPublisher
         ref={otPublisher}
         properties={{
