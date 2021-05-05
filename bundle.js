@@ -75,12 +75,12 @@ var App = function App(_ref) {
       onConnect = _ref.onConnect,
       onError = _ref.onError;
 
-  var _useState = (0, _react.useState)(false),
+  var _useState = (0, _react.useState)("connecting"),
       _useState2 = _slicedToArray(_useState, 2),
       isconnected = _useState2[0],
       setisConnected = _useState2[1];
 
-  var _useState3 = (0, _react.useState)(false),
+  var _useState3 = (0, _react.useState)(null),
       _useState4 = _slicedToArray(_useState3, 2),
       networkWarning = _useState4[0],
       setNetworkwarning = _useState4[1];
@@ -124,18 +124,19 @@ var App = function App(_ref) {
   eventHandlers = {
     sessionConnected: function sessionConnected() {
       console.log("yeyy connected");
-      setisConnected(true);
+      setisConnected("connected");
     },
     sessionReconnecting: function sessionReconnecting() {
-      setNetworkwarning(true);
+      setNetworkwarning("warning");
+      setisConnected("reconnecting");
     },
     sessionReconnected: function sessionReconnected() {
       setNetworkwarning(false);
+      setisConnected("connected");
     },
     sessionDisconnected: function sessionDisconnected(e) {
-      setisConnected(false);
-      if (e.reason === "networkDisconnected") setNetworkwarning(true);
-      //console.log("ups disconnected");
+      setisConnected("disconnected");
+      if (e.reason === "networkDisconnected") setNetworkwarning("error");
     }
   };
 
@@ -165,7 +166,10 @@ var App = function App(_ref) {
       onError: onError
     },
     _react2.default.createElement(_ConnectionStatus2.default, { isconnected: isconnected }),
-    _react2.default.createElement(_NetworkWarning2.default, { networkWarning: networkWarning }),
+    _react2.default.createElement(_NetworkWarning2.default, {
+      networkWarning: networkWarning,
+      setisConnected: setisConnected
+    }),
     _react2.default.createElement(_Publisher2.default, null),
     _react2.default.createElement(
       _src.OTStreams,
@@ -275,7 +279,7 @@ var ConnectionStatus = function ConnectionStatus(_ref) {
   // } else {
   //   status = "Disconnected";
   // }
-  var status = isconnected ? "Connected" : "Disconnected";
+  //let status = isconnected ? "Connected" : "Disconnected";
   // let status = true ? "Connected" : "Disconnected";
 
   return _react2.default.createElement(
@@ -287,7 +291,7 @@ var ConnectionStatus = function ConnectionStatus(_ref) {
       "Status:"
     ),
     " ",
-    status
+    isconnected
   );
 };
 
@@ -309,10 +313,17 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var NetworkWarning = function NetworkWarning(_ref) {
   var networkWarning = _ref.networkWarning;
 
+  if (networkWarning === "error") {
+    return _react2.default.createElement(
+      "div",
+      null,
+      "Your network connection terminated the session"
+    );
+  }
   return networkWarning && _react2.default.createElement(
     "div",
     null,
-    "Your network connection terminated the session"
+    "We're trying to reconnect you. Check your network connection"
   );
 };
 
@@ -653,7 +664,7 @@ exports.default = {
   SESSION_ID: "1_MX40NjI2NDk1Mn5-MTYxOTk4MjgwMzk4NH42QXZmVkZFTFIrZXlEVWJKNFBYcjAwOTB-fg",
   TOKEN: "T1==cGFydG5lcl9pZD00NjI2NDk1MiZzaWc9MTE5MGJiYmRmMmU0ZDdmZWI1NmQ1MWRjYjJkYmEwZjNlZTZmMTI1ODpzZXNzaW9uX2lkPTFfTVg0ME5qSTJORGsxTW41LU1UWXhPVGs0TWpnd016azROSDQyUVhabVZrWkZURklyWlhsRVZXSktORkJZY2pBd09UQi1mZyZjcmVhdGVfdGltZT0xNjIwMDY5Mjg3Jm5vbmNlPTAuMDY3OTA2NDc0Njk4MTg0MTImcm9sZT1wdWJsaXNoZXImZXhwaXJlX3RpbWU9MTYyMDY3NDA4NiZpbml0aWFsX2xheW91dF9jbGFzc19saXN0PQ==",
   CHROME_EXTENSION_ID: "baz",
-  SERVER_URL: "https://tokboxpruebita.herokuapp.com"
+  SERVER_URL: ""
 };
 
 },{}],10:[function(require,module,exports){

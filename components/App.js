@@ -12,8 +12,8 @@ import config from "../config";
 
 //COULD i just reference the library on the index.html file and then in the App component useEffect to retrieve apikey, sessionId and token?
 const App = ({ eventHandlers, onConnect, onError }) => {
-  const [isconnected, setisConnected] = useState(false);
-  const [networkWarning, setNetworkwarning] = useState(false);
+  const [isconnected, setisConnected] = useState("connecting");
+  const [networkWarning, setNetworkwarning] = useState(null);
   const [creds, setCreds] = useState(null);
   const [isLoading, setisLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -47,18 +47,19 @@ const App = ({ eventHandlers, onConnect, onError }) => {
   eventHandlers = {
     sessionConnected: () => {
       console.log("yeyy connected");
-      setisConnected(true);
+      setisConnected("connected");
     },
     sessionReconnecting: () => {
-      setNetworkwarning(true);
+      setNetworkwarning("warning");
+      setisConnected("reconnecting");
     },
     sessionReconnected: () => {
       setNetworkwarning(false);
+      setisConnected("connected");
     },
     sessionDisconnected: e => {
-      setisConnected(false);
-      if (e.reason === "networkDisconnected") setNetworkwarning(true);
-      //console.log("ups disconnected");
+      setisConnected("disconnected");
+      if (e.reason === "networkDisconnected") setNetworkwarning("error");
     }
   };
 
@@ -80,7 +81,10 @@ const App = ({ eventHandlers, onConnect, onError }) => {
         onError={onError}
       >
         <ConnectionStatus isconnected={isconnected} />
-        <NetworkWarning networkWarning={networkWarning} />
+        <NetworkWarning
+          networkWarning={networkWarning}
+          setisConnected={setisConnected}
+        />
         <Publisher />
         <OTStreams>
           <Subscriber />
