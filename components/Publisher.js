@@ -3,6 +3,7 @@ import React, { Component, useState, useEffect, useRef } from "react";
 import { OTPublisher } from "../../src";
 import RadioButtons from "./RadioButtons";
 import CheckBox from "./CheckBox";
+import Stats from "./Stats";
 
 const Publisher = ({ eventHandlers, onError, onInit }) => {
   const [isPublishingVideo, setisPublishingVideo] = useState(true);
@@ -12,6 +13,7 @@ const Publisher = ({ eventHandlers, onError, onInit }) => {
   //const publisher = useRef(null);
   const otPublisher = React.useRef();
   const [pub, setPublisher] = useState(null);
+  const [stats, setStats] = useState(null);
 
   useEffect(() => {
     getPublisher();
@@ -39,12 +41,19 @@ const Publisher = ({ eventHandlers, onError, onInit }) => {
     else setSource(undefined);
   };
 
+  const getStats = () => {
+    setInterval(() => {
+      otPublisher.current.state.publisher.getStats((err, data) => {
+        if (!err) setStats(data[0]);
+      });
+    }, 5000);
+  };
+
   eventHandlers = {
     streamCreated: event => {
       console.log("Publisher stream created!");
       console.log(otPublisher);
-      console.log(otPublisher.current.state.publisher.getAudioSource());
-      //console.log(getPublisher().getAudioSource());
+      getStats();
     },
     streamDestroyed: event => {
       console.log("Publisher stream destroyed!");
@@ -58,6 +67,7 @@ const Publisher = ({ eventHandlers, onError, onInit }) => {
     setError(err);
     console.log(" error: `Failed to publish: ${err.message}");
   };
+
   onInit = () => {
     //setPublisher(getPublisher());
     console.log("pub init");
@@ -79,6 +89,7 @@ const Publisher = ({ eventHandlers, onError, onInit }) => {
         onError={onError}
         onInit={onInit}
       />
+      {stats && <Stats stats={stats}></Stats>}
       <RadioButtons
         buttons={[
           {
